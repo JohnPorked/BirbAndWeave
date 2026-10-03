@@ -1,0 +1,55 @@
+name: Build and publish Birb and Weave
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Get the project files
+        uses: actions/checkout@v6
+      - name: Prepare GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Export the Godot web game
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="4.4.1"
+          godot_dir="$RUNNER_TEMP/godot"
+          template_dir="$HOME/.local/share/godot/export_templates/${version}.stable"
+          mkdir -p "$godot_dir" "$template_dir" build public
+          curl --fail --location --retry 3 \
+            "https://downloads.godotengine.org/?flavor=stable&platform=linux.64&slug=linux.x86_64.zip&version=${version}" \
+            --output "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$godot_dir"
+          godot_bin="$(find "$godot_dir" -type f -name 'Godot_v*.x86_64' -print -quit)"
+          test -n "$godot_bin"
+          chmod +x "$godot_bin"
+          curl --fail --location --retry 3 \
+            "https://downloads.godotengine.org/?flavor=stable&platform=templates&slug=export_templates.tpz&version=${version}" \
+            --output "$RUNNER_TEMP/export_templates.tpz"
+          mkdir -p "$RUNNER_TEMP/export-templates"
+          unzip -q "$RUNNER_TEMP/export_templates.tpz" -d "$RUNNER_TEMP/export-templates"
+          cp -a "$RUNNER_TEMP/export-templates/templates/." "$template_dir/"
+          "$godot_bin" --headless --editor --path . --import --quit
+          "$godot_bin" --headless --path . --export-release "Web" build/index.html
+          python tools/bundle_standalone.py build public/index.html
+          touch public/.nojekyll
+      - name: Upload browser game
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+      - name: Publish browser game
+        id: deployment
+        uses: actions/deploy-pages@v4
