@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://jdwfx0oqe4lw"]
+
+[ext_resource type="Script" uid="uid://b054uxv7jjpe0" path="res://cannon.gd" id="1_l8vrq"]
+[ext_resource type="Texture2D" uid="uid://dcjhmjswbnncq" path="res://Assets/Birb1.png" id="2_gxqjs"]
+
+[node name="Cannon" type="CharacterBody2D"]
+script = ExtResource("1_l8vrq")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -7)
+scale = Vector2(0.210938, 0.179688)
+texture = ExtResource("2_gxqjs")
+
+[node name="Marker2D" type="Marker2D" parent="."]

@@ -1,0 +1,52 @@
+[gd_scene load_steps=9 format=3 uid="uid://nkvgq3b2dxem"]
+
+[ext_resource type="Texture2D" uid="uid://b8w874u8tkife" path="res://Assets/birdidle1.png" id="1_4ghl3"]
+[ext_resource type="Script" uid="uid://d1ggwa4em1t4h" path="res://scripts/playuh.gd" id="1_dm18e"]
+[ext_resource type="Texture2D" uid="uid://dxg0u7derfn13" path="res://Assets/birbhit.png" id="2_m31li"]
+[ext_resource type="Texture2D" uid="uid://ut5xrcqm4d42" path="res://Assets/birdidle2.png" id="3_pcnv4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dm18e"]
+atlas = ExtResource("1_4ghl3")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m31li"]
+atlas = ExtResource("3_pcnv4")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pcnv4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_m31li")
+}],
+"loop": true,
+"name": &"Hit",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dm18e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m31li")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_m31li"]
+radius = 12.0416
+
+[node name="Playuh" type="CharacterBody2D"]
+script = ExtResource("1_dm18e")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(23, -26)
+sprite_frames = SubResource("SpriteFrames_pcnv4")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="Playerhitbox" type="CollisionShape2D" parent="."]
+position = Vector2(25, -26)
+shape = SubResource("CircleShape2D_m31li")
