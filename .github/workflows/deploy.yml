@@ -45,6 +45,9 @@ jobs:
           "$godot_bin" --headless --editor --path . --import --quit
           "$godot_bin" --headless --path . --export-release "Web" build/index.html
           python tools/bundle_standalone.py build public/index.html
+          # Godot's web loader fetches the .wasm and .pck by filename. Keep
+          # the exported files together instead of rewriting them as blob URLs.
+          cp -a build/. public/
           touch public/.nojekyll
       - name: Upload browser game
         uses: actions/upload-pages-artifact@v4
